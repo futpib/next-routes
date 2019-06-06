@@ -151,6 +151,7 @@ describe('Link', () => {
       const actual = renderer.render(<Link {...props} {...addProps} />)
       expect(actual.type).toBe(NextLink)
       expect(actual.props).toEqual({ ...props, ...expected })
+      return actual
     }
     return { routes, route, testLink }
   }
@@ -176,6 +177,12 @@ describe('Link', () => {
 
   test('without route', () => {
     setup('a').testLink({ href: '/' }, { href: '/' })
+  })
+
+  test('ref forwarding', () => {
+    const ref = React.createRef()
+    const actual = setup('a').testLink({ route: '/b', ref }, { href: '/b', as: '/b' })
+    expect(actual.ref).toBe(ref)
   })
 })
 
