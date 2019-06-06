@@ -88,7 +88,7 @@ class Routes {
   }
 
   getLink (Link) {
-    const LinkRoutes = props => {
+    const LinkRoutes = React.forwardRef((props, ref) => {
       const { route, params, to, ...newProps } = props
       const nameOrUrl = route || to
 
@@ -96,8 +96,8 @@ class Routes {
         Object.assign(newProps, this.findAndGetUrls(nameOrUrl, params).urls)
       }
 
-      return <Link {...newProps} />
-    }
+      return <Link {...newProps} ref={ref} />
+    })
     return LinkRoutes
   }
 
