@@ -125,7 +125,21 @@ class Route {
     this.page = page.replace(/(^|\/)index$/, '').replace(/^\/?/, '/')
     this.regex = pathToRegexp(this.pattern, this.keys = [])
     this.keyNames = this.keys.map(key => key.name)
-    this.toPath = pathToRegexp.compile(this.pattern)
+    this._toPath = pathToRegexp.compile(this.pattern)
+  }
+
+  toPath (params) {
+    try {
+      return this._toPath(params)
+    } catch (error) {
+      if (error.name === 'TypeError') {
+        error._nextRoutesMetadata = {
+          code: 'TO_PATH',
+          params
+        }
+      }
+      throw error
+    }
   }
 
   match (path) {
@@ -163,7 +177,18 @@ class Route {
   }
 
   getUrls (params) {
-    const as = this.getAs(params)
+    let as
+    try {
+      as = this.getAs(params)
+    } catch (error) {
+      const { code, params } = error._nextRoutesMetadata || {}
+      if (code === 'TO_PATH') {
+        const betterError = new TypeError(`Error converting route params to url. Route \`${this.name}\` expected params: \`${error.message}\`, but was called with: \`${JSON.stringify(params)}\``)
+        betterError.originalError = error
+        throw betterError
+      }
+      throw error
+    }
     const href = this.getHref(params)
     return { as, href }
   }

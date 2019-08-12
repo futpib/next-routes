@@ -184,6 +184,13 @@ describe('Link', () => {
     const actual = setup('a').testLink({ route: '/b', ref }, { href: '/b', as: '/b' })
     expect(actual.ref).toBe(ref)
   })
+
+  test('missing route params error', () => {
+    const { routes: { Link } } = setup('a', '/a/:b')
+    expect(() => {
+      renderer.render(<Link route='a' params={{ c: 'd' }} />)
+    }).toThrow('Route `a` expected params')
+  })
 })
 
 const routerMethods = ['push', 'replace', 'prefetch']
