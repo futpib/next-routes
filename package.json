@@ -1,6 +1,6 @@
 {
   "name": "@futpib/next-routes",
-  "version": "3.0.0-alpha.1",
+  "version": "3.0.1",
   "description": "Easy to use universal dynamic routes for Next.js",
   "repository": {
     "type": "git",
